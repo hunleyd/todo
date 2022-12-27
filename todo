@@ -24,6 +24,20 @@ if [[ "${TRACE-0}" == "1" ]]; then
     set -o xtrace
 fi
 
+# vars
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# functions
+function show_help {
+    echo -e "${YELLOW}Usage: todo [help, init, pop]${NC}"
+    echo -e "${YELLOW}   or: todo push TASK${NC}"
+    echo
+    echo -e "${YELLOW}  help      Show this help${NC}"
+    echo -e "${YELLOW}  init      Create config directory and config file${NC}"
+    echo -e "${YELLOW}  pop       Retrieve the 'topmost' todo in the stack${NC}"
+    echo -e "${YELLOW}  push msg  Push a todo onto the stack with the given msg${NC}"
+}
 # main logic
 case $# in
     1)
