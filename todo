@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ##
 # todo
@@ -18,3 +18,38 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 # Place, Suite 330, Boston, MA  02111-1307  USA
+
+# handle debugging
+if [[ "${TRACE-0}" == "1" ]]; then
+    set -o xtrace
+fi
+
+# main logic
+case $# in
+    1)
+        case $1 in
+            pop)
+                echo "pop"
+                ;;
+            help|*)
+                show_help
+                exit 1
+                ;;
+        esac
+        ;;
+    2)
+        case $1 in
+            push)
+                echo "push"
+                ;;
+            *)
+                show_help
+                exit 1
+                ;;
+        esac
+        ;;
+    0|*)
+        show_help
+        exit 1
+        ;;
+esac
