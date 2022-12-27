@@ -25,25 +25,39 @@ if [[ "${TRACE-0}" == "1" ]]; then
 fi
 
 # vars
-YELLOW='\033[1;33m'
+CONFIG_DIR="${XDG_CONFIG_HOME:=${HOME}/.config}/todo"
+CONFIG_FILE="todorc"
 NC='\033[0m'
+YELLOW='\033[1;33m'
 
 # functions
 function show_help {
-    echo -e "${YELLOW}Usage: todo [help, init, pop]${NC}"
+    echo -e "${YELLOW}Usage: todo [help, pop]${NC}"
     echo -e "${YELLOW}   or: todo push TASK${NC}"
     echo
     echo -e "${YELLOW}  help      Show this help${NC}"
-    echo -e "${YELLOW}  init      Create config directory and config file${NC}"
     echo -e "${YELLOW}  pop       Retrieve the 'topmost' todo in the stack${NC}"
     echo -e "${YELLOW}  push msg  Push a todo onto the stack with the given msg${NC}"
+}
+
+function config_if_needed {
+    if [[ ! -d ${CONFIG_DIR} ]]; then
+        mkdir -p "${CONFIG_DIR}"
+    fi
+
+    if [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
+        echo "preserve_queue=false" > "${CONFIG_DIR}/${CONFIG_FILE}"
+        echo "queue_mode=lifo" >> "${CONFIG_DIR}/${CONFIG_FILE}"
+    fi
+
+    source "${CONFIG_DIR}/${CONFIG_FILE}"
 }
 # main logic
 case $# in
     1)
         case $1 in
             pop)
-                echo "pop"
+                config_if_needed
                 ;;
             help|*)
                 show_help
@@ -54,7 +68,7 @@ case $# in
     2)
         case $1 in
             push)
-                echo "push"
+                config_if_needed
                 ;;
             *)
                 show_help
