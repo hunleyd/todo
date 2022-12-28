@@ -29,6 +29,8 @@ CONFIG_DIR="${XDG_CONFIG_HOME:=${HOME}/.config}/todo"
 CONFIG_FILE="todorc"
 NC='\033[0m'
 YELLOW='\033[1;33m'
+PRESERVE_QUEUE=false
+QUEUE_MODE=lifo
 
 # functions
 function show_help {
@@ -47,8 +49,8 @@ function config_if_needed {
     fi
 
     if [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
-        echo "preserve_queue=false" > "${CONFIG_DIR}/${CONFIG_FILE}"
-        echo "queue_mode=lifo" >> "${CONFIG_DIR}/${CONFIG_FILE}"
+        echo "PRESERVE_QUEUE=${PRESERVE_QUEUE}" > "${CONFIG_DIR}/${CONFIG_FILE}"
+        echo "QUEUE_MODE=${QUEUE_MODE}" >> "${CONFIG_DIR}/${CONFIG_FILE}"
     fi
 
     source "${CONFIG_DIR}/${CONFIG_FILE}"
