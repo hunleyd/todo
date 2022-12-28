@@ -36,6 +36,7 @@ function show_help {
     echo -e "${YELLOW}   or: todo push TASK${NC}"
     echo
     echo -e "${YELLOW}  help      Show this help${NC}"
+    echo -e "${YELLOW}  list      List all saved todos${NC}"
     echo -e "${YELLOW}  pop       Retrieve the 'topmost' todo in the stack${NC}"
     echo -e "${YELLOW}  push msg  Push a todo onto the stack with the given msg${NC}"
 }
@@ -52,10 +53,30 @@ function config_if_needed {
 
     source "${CONFIG_DIR}/${CONFIG_FILE}"
 }
+
+function push_to_stack {
+    echo -e "${YELLOW}todo: Creating new todo: ${NC}$@"
+    echo "~$(date +%s)~${PWD}~$@~" >> ${CONFIG_DIR}/todo.lst
+    echo -e "${YELLOW}todo: You have ${NC}$(wc -l ${CONFIG_DIR}/todo.lst | cut -d' ' -f1) ${YELLOW}todos"
+}
+
+function show_todos {
+    echo -e "${YELLOW}todo: Listing existing todos:${NC}"
+    while read -r LINE; do
+        WHEN=$(echo "${LINE}" | cut -d~ -f2)
+        WHERE=$(echo "${LINE}" | cut -d~ -f3)
+        WHAT=$(echo "${LINE}" | cut -d~ -f4)
+        # shellcheck disable=all
+        echo -e "${WHAT}\t${WHERE}\t$(date --date @${WHEN})"
+    done < "${CONFIG_DIR}/todo.lst"
+}
 # main logic
 case $# in
     1)
         case $1 in
+            list)
+                show_todos
+                ;;
             pop)
                 config_if_needed
                 ;;
@@ -69,6 +90,8 @@ case $# in
         case $1 in
             push)
                 config_if_needed
+                shift
+                push_to_stack "$@"
                 ;;
             *)
                 show_help
