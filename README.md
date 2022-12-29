@@ -32,9 +32,9 @@ That's it. Pretty trivial. right?
 
 Planned features:
 
-- [✅] LIFO support
-- [✅] FIFO support
-- [✅] popping a task w/o removing it from the stack
+- ✅ LIFO support
+- ✅ FIFO support
+- ✅ popping a task w/o removing it from the stack
 - [ ] viewing the stack of reminders
 - [ ] popping an arbitrary reminder off the stack
 
