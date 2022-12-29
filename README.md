@@ -14,13 +14,18 @@ The workflow is basically this:
 
 In actual practice, it looks like:
 ```
-~/projects/foo #> todo push 'finish the new unit test'
-~/projects/foo #> mkdir ../bar
-~/projects/foo #> cd ../bar
-~/projects/bar #> [do the needful for the interruption]
-~/projects/bar #> todo pop
-~/projects/foo #> # finish the new unit test
-~/projects/foo #> [finish the new unit test]
+╭─doug@nuc ~/repos/todo  ‹main*›
+╰─➤  ./todo push something2
+todo: Creating new todo: something2
+todo: You have 1 todos
+<go handle the interruption>
+╭─doug@nuc ~  ‹main*›
+╰─➤  ~/repos/todo/todo pop
+todo: something2
+todo: cd /home/doug/repos/todo to continue this todo
+╭─doug@nuc ~/repos/todo  ‹main*›
+╰─➤  ~/repos/todo/todo pop
+todo: no todos remain! Congrats!!
 ```
 
 Under the covers, `todo push` saves the current $PWD and the text of your reminder to
