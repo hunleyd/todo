@@ -72,6 +72,38 @@ function show_todos {
         echo -e "${WHAT}\t${WHERE}\t$(date --date @${WHEN})"
     done < "${CONFIG_DIR}/todo.lst"
 }
+
+function pop_from_stack {
+    TODOS=$(wc -l "${CONFIG_DIR}/todo.lst" | cut -d' ' -f1)
+    if [[ ${TODOS} -lt 1 ]]; then
+        echo -e "${YELLOW}todo: no todos remain! Congrats!!"
+        exit 0
+    fi
+
+    if [[ "${QUEUE_MODE}" == "lifo" ]]; then
+        WHEN=$(tail -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+    else
+        WHEN=$(head -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+    fi
+
+    WHERE=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f3)
+    WHAT=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f4)
+
+    echo -e "${YELLOW}todo: ${WHAT} ${NC}"
+
+    if [[ -d ${WHERE} ]]; then
+        if [[ "${WHERE}" == "${PWD}" ]]; then
+            :
+        else
+            echo -e "${YELLOW}todo: cd ${NC}${WHERE} ${YELLOW}to continue this todo"
+        fi
+    fi
+
+    if [[ "${PRESERVE_QUEUE}" == 'false' ]]; then
+        sed -i "/^~${WHEN}~.*/d" "${CONFIG_DIR}/todo.lst"
+    fi
+}
+
 # main logic
 case $# in
     1)
@@ -81,6 +113,7 @@ case $# in
                 ;;
             pop)
                 config_if_needed
+                pop_from_stack
                 ;;
             help|*)
                 show_help
