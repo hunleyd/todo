@@ -30,7 +30,7 @@ todo: no todos remain! Congrats!!
 
 Under the covers, `todo push` saves the current $PWD and the text of your reminder to
 `~/.config/todo/tasks.lst` and then `todo pop` grabs the most recent entry,
-switches to the directory associated with it, and then prints the reminder text
+tells you the directory associated with it, and then prints the reminder text
 that you entered.
 
 That's it. Pretty trivial. right?
