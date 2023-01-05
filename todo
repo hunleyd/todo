@@ -62,14 +62,24 @@ function push_to_stack {
     echo -e "${YELLOW}todo: You have ${NC}$(wc -l ${CONFIG_DIR}/todo.lst | cut -d' ' -f1) ${YELLOW}todos"
 }
 
+function find_when {
+    if [[ $(uname -o) == "Darwin" ]]; then
+        WHEN="$(date -j -f %s "$1")"
+    else
+        WHEN="$(date --date "@$1")"
+    fi
+}
+
 function show_todos {
     echo -e "${YELLOW}todo: Listing existing todos:${NC}"
     while read -r LINE; do
-        WHEN=$(echo "${LINE}" | cut -d~ -f2)
+        _WHEN=$(echo "${LINE}" | cut -d~ -f2)
         WHERE=$(echo "${LINE}" | cut -d~ -f3)
         WHAT=$(echo "${LINE}" | cut -d~ -f4)
+
+        find_when ${_WHEN}
         # shellcheck disable=all
-        echo -e "${WHAT}\t${WHERE}\t$(date --date @${WHEN})"
+        echo -e "${WHAT}\t${WHERE}\t${WHEN}"
     done < "${CONFIG_DIR}/todo.lst"
 }
 
