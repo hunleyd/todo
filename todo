@@ -63,7 +63,7 @@ function push_to_stack {
 }
 
 function find_when {
-    if [[ $(uname -o) == "Darwin" ]]; then
+    if [[ $(uname -s) == "Darwin" ]]; then
         WHEN="$(date -j -f %s "$1")"
     else
         WHEN="$(date --date "@$1")"
