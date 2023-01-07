@@ -33,6 +33,10 @@ Under the covers, `todo push` saves the current $PWD and the text of your remind
 tells you the directory associated with it, and then prints the reminder text
 that you entered.
 
+Note that `todo` will attempt to find en entry for the current $PWD and if there are
+none, it will fall back to any task (while still respecting your LIFO/FIFO preference
+in either case).
+
 That's it. Pretty trivial. right?
 
 Planned features:
@@ -40,6 +44,5 @@ Planned features:
 - ✅ LIFO support
 - ✅ FIFO support
 - ✅ popping a task w/o removing it from the stack
-- [ ] viewing the stack of reminders
-- [ ] popping an arbitrary reminder off the stack
+- ✅ viewing the stack of reminders
 

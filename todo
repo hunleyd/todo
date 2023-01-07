@@ -73,11 +73,11 @@ function find_when {
 function show_todos {
     echo -e "${YELLOW}todo: Listing existing todos:${NC}"
     while read -r LINE; do
-        _WHEN=$(echo "${LINE}" | cut -d~ -f2)
-        WHERE=$(echo "${LINE}" | cut -d~ -f3)
-        WHAT=$(echo "${LINE}" | cut -d~ -f4)
+        _WHEN=$(echo "${LINE}" | cut -d~ -f3)
+        WHERE=$(echo "${LINE}" | cut -d~ -f4)
+        WHAT=$(echo "${LINE}" | cut -d~ -f5)
 
-        find_when ${_WHEN}
+        find_when "${_WHEN}"
         # shellcheck disable=all
         echo -e "${WHAT}\t${WHERE}\t${WHEN}"
     done < "${CONFIG_DIR}/todo.lst"
@@ -86,27 +86,28 @@ function show_todos {
 function pop_from_stack {
     TODOS=$(wc -l "${CONFIG_DIR}/todo.lst" | cut -d' ' -f1)
     if [[ ${TODOS} -lt 1 ]]; then
-        echo -e "${YELLOW}todo: no todos remain! Congrats!!"
+        echo -e "${YELLOW}todo: no todos remain! Congrats!!${NC}"
         exit 0
     fi
 
     if [[ "${QUEUE_MODE}" == "lifo" ]]; then
-        WHEN=$(tail -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+        PROJECT_WHEN=$(grep "~${PWD}~" "${CONFIG_DIR}/todo.lst" | tail -n 1 | cut -d~ -f2)
+        NONPROJECT_WHEN=$(tail -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+        WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
     else
-        WHEN=$(head -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+        PROJECT_WHEN=$(grep "~${PWD}~" "${CONFIG_DIR}/todo.lst" | head -n 1 | cut -d~ -f2)
+        NONPROJECT_WHEN=$(head -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+        WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
     fi
 
     WHERE=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f3)
     WHAT=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f4)
 
-    echo -e "${YELLOW}todo: ${WHAT} ${NC}"
-
-    if [[ -d ${WHERE} ]]; then
-        if [[ "${WHERE}" == "${PWD}" ]]; then
-            :
-        else
-            echo -e "${YELLOW}todo: cd ${NC}${WHERE} ${YELLOW}to continue this todo"
-        fi
+    if [[ "${WHERE}" == "${PWD}" ]]; then
+        echo -e "${YELLOW}todo: ${WHAT} ${NC}"
+    else
+        echo -e "${YELLOW}todo: ${WHAT} ${NC}"
+        echo -e "${YELLOW}todo: cd ${NC}${WHERE} ${YELLOW}to continue this todo"
     fi
 
     if [[ "${PRESERVE_QUEUE}" == 'false' ]]; then
