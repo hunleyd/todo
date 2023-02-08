@@ -31,6 +31,7 @@ NC='\033[0m'
 YELLOW='\033[1;33m'
 PRESERVE_QUEUE=false
 QUEUE_MODE=lifo
+PROJECTS_ONLY=false
 
 # functions
 function show_help {
@@ -50,6 +51,7 @@ function config_if_needed {
 
     if [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
         echo "PRESERVE_QUEUE=${PRESERVE_QUEUE}" > "${CONFIG_DIR}/${CONFIG_FILE}"
+        echo "PROJECTS_ONLY=$(PROJECTS_ONLY)" >> "${CONFIG_DIR}/${CONFIG_FILE}"
         echo "QUEUE_MODE=${QUEUE_MODE}" >> "${CONFIG_DIR}/${CONFIG_FILE}"
     fi
 
@@ -92,26 +94,39 @@ function pop_from_stack {
 
     if [[ "${QUEUE_MODE}" == "lifo" ]]; then
         PROJECT_WHEN=$(grep "~${PWD}~" "${CONFIG_DIR}/todo.lst" | tail -n 1 | cut -d~ -f2)
-        NONPROJECT_WHEN=$(tail -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
-        WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
+        if [[ "${PROJECTS_ONLY}" == 'false' ]]; then
+            NONPROJECT_WHEN=$(tail -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+            WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
+        else
+            WHEN="${PROJECT_WHEN}"
+        fi
     else
         PROJECT_WHEN=$(grep "~${PWD}~" "${CONFIG_DIR}/todo.lst" | head -n 1 | cut -d~ -f2)
-        NONPROJECT_WHEN=$(head -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
-        WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
+        if [[ "${PROJECTS_ONLY}" == 'false' ]]; then
+            NONPROJECT_WHEN=$(head -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
+            WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
+        else
+            WHEN="${PROJECT_WHEN}"
+        fi
     fi
 
-    WHERE=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f3)
-    WHAT=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f4)
-
-    if [[ "${WHERE}" == "${PWD}" ]]; then
-        echo -e "${YELLOW}todo: ${WHAT} ${NC}"
+    if [[ -z "${WHEN}" ]]; then
+        echo -e "${YELLOW}todo: no todos remain in this project! Congrats!!${NC}"
+        exit 0
     else
-        echo -e "${YELLOW}todo: ${WHAT} ${NC}"
-        echo -e "${YELLOW}todo: cd ${NC}${WHERE} ${YELLOW}to continue this todo"
-    fi
+        WHERE=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f3)
+        WHAT=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f4)
 
-    if [[ "${PRESERVE_QUEUE}" == 'false' ]]; then
-        sed -i "/^~${WHEN}~.*/d" "${CONFIG_DIR}/todo.lst"
+        if [[ "${WHERE}" == "${PWD}" ]]; then
+            echo -e "${YELLOW}todo: ${WHAT} ${NC}"
+        else
+            echo -e "${YELLOW}todo: ${WHAT} ${NC}"
+            echo -e "${YELLOW}todo: cd ${NC}${WHERE} ${YELLOW}to continue this todo"
+        fi
+
+        if [[ "${PRESERVE_QUEUE}" == 'false' ]]; then
+            sed -i "/^~${WHEN}~.*/d" "${CONFIG_DIR}/todo.lst"
+        fi
     fi
 }
 

@@ -44,5 +44,12 @@ Planned features:
 - ✅ LIFO support
 - ✅ FIFO support
 - ✅ popping a task w/o removing it from the stack
+- ✅ popping a task from just the current project or all projects
 - ✅ viewing the stack of reminders
 
+Configuration:
+
+At this time, the following configuration options are available:
+- PRESERVE_QUEUE - Boolean - Whether or not to remove popped tasks from the queue
+- PROJECTS_ONLY - Boolean - Whether or not to look for any tasks to pop or only from the current project dir
+- QUEUE_MODE - enum - Valid values are 'lifo' and 'fifo'. Determines if we should pop the oldest or newest todo
