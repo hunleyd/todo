@@ -94,7 +94,8 @@ function pop_from_stack {
     fi
 
     if [[ "${QUEUE_MODE}" == "lifo" ]]; then
-        PROJECT_WHEN=$(grep "~${PWD}~" "${CONFIG_DIR}/todo.lst" | tail -n 1 | cut -d~ -f2)
+        _toplevel=$(git rev-parse --show-toplevel 2>/dev/null || echo "${PWD}")
+        PROJECT_WHEN=$(grep "~${_toplevel}~" "${CONFIG_DIR}/todo.lst" | tail -n 1 | cut -d~ -f2)
         if [[ "${PROJECTS_ONLY}" == 'false' ]]; then
             NONPROJECT_WHEN=$(tail -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
             WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
