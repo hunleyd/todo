@@ -28,20 +28,20 @@ fi
 CONFIG_DIR="${XDG_CONFIG_HOME:=${HOME}/.config}/todo"
 CONFIG_FILE="todorc"
 NC='\033[0m'
-YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 PRESERVE_QUEUE=false
 QUEUE_MODE=lifo
 PROJECTS_ONLY=false
 
 # functions
 function show_help {
-    echo -e "${YELLOW}Usage: todo [help, pop]${NC}"
-    echo -e "${YELLOW}   or: todo push TASK${NC}"
+    echo -e "${BLUE}Usage: todo [help, pop]${NC}"
+    echo -e "${BLUE}   or: todo push TASK${NC}"
     echo
-    echo -e "${YELLOW}  help      Show this help${NC}"
-    echo -e "${YELLOW}  list      List all saved todos${NC}"
-    echo -e "${YELLOW}  pop       Retrieve the 'topmost' todo in the stack${NC}"
-    echo -e "${YELLOW}  push msg  Push a todo onto the stack with the given msg${NC}"
+    echo -e "${BLUE}  help      Show this help${NC}"
+    echo -e "${BLUE}  list      List all saved todos${NC}"
+    echo -e "${BLUE}  pop       Retrieve the 'topmost' todo in the stack${NC}"
+    echo -e "${BLUE}  push msg  Push a todo onto the stack with the given msg${NC}"
 }
 
 function config_if_needed {
@@ -60,9 +60,9 @@ function config_if_needed {
 
 function push_to_stack {
     _toplevel=$(git rev-parse --show-toplevel 2>/dev/null || echo "${PWD}")
-    echo -e "${YELLOW}todo: Creating new todo: ${NC}$@" && \
+    echo -e "${BLUE}todo: Creating new todo: ${NC}$@" && \
     echo "~$(date +%s)~${_toplevel}~$@~" >> ${CONFIG_DIR}/todo.lst && \
-    echo -e "${YELLOW}todo: You have ${NC}$(wc -l ${CONFIG_DIR}/todo.lst | cut -d' ' -f1) ${YELLOW}todos"
+    echo -e "${BLUE}todo: You have ${NC}$(wc -l ${CONFIG_DIR}/todo.lst | cut -d' ' -f1) ${BLUE}todos"
 }
 
 function find_when {
@@ -74,7 +74,7 @@ function find_when {
 }
 
 function show_todos {
-    echo -e "${YELLOW}todo: Listing existing todos:${NC}"
+    echo -e "${BLUE}todo: Listing existing todos:${NC}"
     while read -r LINE; do
         _WHEN=$(echo "${LINE}" | cut -d~ -f3)
         WHERE=$(echo "${LINE}" | cut -d~ -f4)
@@ -89,7 +89,7 @@ function show_todos {
 function pop_from_stack {
     TODOS=$(wc -l "${CONFIG_DIR}/todo.lst" | cut -d' ' -f1)
     if [[ ${TODOS} -lt 1 ]]; then
-        echo -e "${YELLOW}todo: no todos remain! Congrats!!${NC}"
+        echo -e "${BLUE}todo: no todos remain! Congrats!!${NC}"
         exit 0
     fi
 
@@ -114,17 +114,17 @@ function pop_from_stack {
     fi
 
     if [[ -z "${WHEN}" ]]; then
-        echo -e "${YELLOW}todo: no todos remain in this project! Congrats!!${NC}"
+        echo -e "${BLUE}todo: no todos remain in this project! Congrats!!${NC}"
         exit 0
     else
         WHERE=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f3)
         WHAT=$(grep "^~${WHEN}~.*" "${CONFIG_DIR}/todo.lst" | cut -d~ -f4)
 
         if [[ "${WHERE}" == "${PWD}" ]]; then
-            echo -e "${YELLOW}todo: ${WHAT} ${NC}"
+            echo -e "${BLUE}todo: ${WHAT} ${NC}"
         else
-            echo -e "${YELLOW}todo: ${WHAT} ${NC}"
-            echo -e "${YELLOW}todo: cd ${NC}${WHERE} ${YELLOW}to continue this todo"
+            echo -e "${BLUE}todo: ${WHAT} ${NC}"
+            echo -e "${BLUE}todo: cd ${NC}${WHERE} ${BLUE}to continue this todo"
         fi
 
         if [[ "${PRESERVE_QUEUE}" == 'false' ]]; then
