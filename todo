@@ -59,8 +59,9 @@ function config_if_needed {
 }
 
 function push_to_stack {
-    echo -e "${YELLOW}todo: Creating new todo: ${NC}$@"
-    echo "~$(date +%s)~${PWD}~$@~" >> ${CONFIG_DIR}/todo.lst
+    _toplevel=$(git rev-parse --show-toplevel 2>/dev/null || echo "${PWD}")
+    echo -e "${YELLOW}todo: Creating new todo: ${NC}$@" && \
+    echo "~$(date +%s)~${_toplevel}~$@~" >> ${CONFIG_DIR}/todo.lst && \
     echo -e "${YELLOW}todo: You have ${NC}$(wc -l ${CONFIG_DIR}/todo.lst | cut -d' ' -f1) ${YELLOW}todos"
 }
 
@@ -101,7 +102,8 @@ function pop_from_stack {
             WHEN="${PROJECT_WHEN}"
         fi
     else
-        PROJECT_WHEN=$(grep "~${PWD}~" "${CONFIG_DIR}/todo.lst" | head -n 1 | cut -d~ -f2)
+        _toplevel=$(git rev-parse --show-toplevel 2>/dev/null || echo "${PWD}")
+        PROJECT_WHEN=$(grep "~${_toplevel}~" "${CONFIG_DIR}/todo.lst" | head -n 1 | cut -d~ -f2)
         if [[ "${PROJECTS_ONLY}" == 'false' ]]; then
             NONPROJECT_WHEN=$(head -n 1 "${CONFIG_DIR}/todo.lst" | cut -d~ -f2)
             WHEN="${PROJECT_WHEN:-${NONPROJECT_WHEN}}"
