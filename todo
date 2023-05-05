@@ -87,7 +87,7 @@ function show_todos {
 }
 
 function pop_from_stack {
-    TODOS=$(wc -l "${CONFIG_DIR}/todo.lst" | cut -d' ' -f1)
+    TODOS=$(wc -l "${CONFIG_DIR}/todo.lst" 2>/dev/null | cut -d' ' -f1)
     if [[ ${TODOS} -lt 1 ]]; then
         echo -e "${BLUE}todo: no todos remain! Congrats!!${NC}"
         exit 0
