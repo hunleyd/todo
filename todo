@@ -29,6 +29,7 @@ CONFIG_DIR="${XDG_CONFIG_HOME:=${HOME}/.config}/todo"
 CONFIG_FILE="todorc"
 NC='\033[0m'
 BLUE='\033[0;34m'
+DEFAULT_ACTION=help
 PRESERVE_QUEUE=false
 QUEUE_MODE=lifo
 PROJECTS_ONLY=false
@@ -50,9 +51,11 @@ function config_if_needed {
     fi
 
     if [[ ! -s ${CONFIG_DIR}/${CONFIG_FILE} ]]; then
-        echo "PRESERVE_QUEUE=${PRESERVE_QUEUE}" > "${CONFIG_DIR}/${CONFIG_FILE}"
-        echo "PROJECTS_ONLY=$(PROJECTS_ONLY)" >> "${CONFIG_DIR}/${CONFIG_FILE}"
-        echo "QUEUE_MODE=${QUEUE_MODE}" >> "${CONFIG_DIR}/${CONFIG_FILE}"
+        { echo "DEFAULT_ACTION=${DEFAULT_ACTION}" ;
+          echo "PRESERVE_QUEUE=${PRESERVE_QUEUE}" ;
+          echo "PROJECTS_ONLY=${PROJECTS_ONLY}" ;
+          echo "QUEUE_MODE=${QUEUE_MODE}" ;
+        } > "${CONFIG_DIR}/${CONFIG_FILE}"
     fi
 
     source "${CONFIG_DIR}/${CONFIG_FILE}"
@@ -76,9 +79,9 @@ function find_when {
 function show_todos {
     echo -e "${BLUE}todo: Listing existing todos:${NC}"
     while read -r LINE; do
-        _WHEN=$(echo "${LINE}" | cut -d~ -f3)
-        WHERE=$(echo "${LINE}" | cut -d~ -f4)
-        WHAT=$(echo "${LINE}" | cut -d~ -f5)
+        _WHEN=$(echo "${LINE}" | cut -d~ -f2)
+        WHERE=$(echo "${LINE}" | cut -d~ -f3)
+        WHAT=$(echo "${LINE}" | cut -d~ -f4)
 
         find_when "${_WHEN}"
         # shellcheck disable=all
