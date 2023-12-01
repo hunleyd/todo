@@ -33,6 +33,7 @@ DEFAULT_ACTION=help
 PRESERVE_QUEUE=false
 QUEUE_MODE=lifo
 PROJECTS_ONLY=false
+DATE_EXEC=/bin/date
 
 # functions
 function show_help {
@@ -64,15 +65,15 @@ function config_if_needed {
 function push_to_stack {
     _toplevel=$(git rev-parse --show-toplevel 2>/dev/null || echo "${PWD}")
     echo -e "${BLUE}todo: Creating new todo: ${NC}$@" && \
-    echo "~$(date +%s)~${_toplevel}~$@~" >> ${CONFIG_DIR}/todo.lst && \
+    echo "~$(${DATE_EXEC} +%s)~${_toplevel}~$@~" >> ${CONFIG_DIR}/todo.lst && \
     echo -e "${BLUE}todo: You have ${NC}$(wc -l ${CONFIG_DIR}/todo.lst | cut -d' ' -f1) ${BLUE}todos"
 }
 
 function find_when {
     if [[ $(uname -s) == "Darwin" ]]; then
-        WHEN="$(date -j -f %s "$1")"
+        WHEN="$(${DATE_EXEC} -j -f %s "$1")"
     else
-        WHEN="$(date --date "@$1")"
+        WHEN="$(${DATE_EXEC} --date "@$1")"
     fi
 }
 
