@@ -15,13 +15,13 @@ The workflow is basically this:
 In actual practice, it looks like:
 ```
 ╭─doug@nuc ~/repos/todo  ‹main*›
-╰─➤  ./todo push something2
-todo: Creating new todo: something2
+╰─➤  ./todo push "something I need to do"
+todo: Creating new todo: something I need to do
 todo: You have 1 todos
 <go handle the interruption>
 ╭─doug@nuc ~  ‹main*›
 ╰─➤  ~/repos/todo/todo pop
-todo: something2
+todo: something I need to do
 todo: cd /home/doug/repos/todo to continue this todo
 ╭─doug@nuc ~/repos/todo  ‹main*›
 ╰─➤  ~/repos/todo/todo pop
