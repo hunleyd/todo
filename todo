@@ -64,15 +64,15 @@ function config_if_needed {
 function push_to_stack {
     _toplevel=$(git rev-parse --show-toplevel 2>/dev/null || echo "${PWD}")
     echo -e "${BLUE}todo: Creating new todo: ${NC}$@" && \
-    echo "~$(date +%s)~${_toplevel}~$@~" >> ${CONFIG_DIR}/todo.lst && \
+    echo "~$(/bin/date +%s)~${_toplevel}~$@~" >> ${CONFIG_DIR}/todo.lst && \
     echo -e "${BLUE}todo: You have ${NC}$(wc -l ${CONFIG_DIR}/todo.lst | cut -d' ' -f1) ${BLUE}todos"
 }
 
 function find_when {
     if [[ $(uname -s) == "Darwin" ]]; then
-        WHEN="$(date -j -f %s "$1")"
+        WHEN="$(/bin/date -j -f %s "$1")"
     else
-        WHEN="$(date --date "@$1")"
+        WHEN="$(/bin/date --date "@$1")"
     fi
 }
 
